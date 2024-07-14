@@ -29,105 +29,147 @@ public class Node <Key extends Comparable<Key>>{
      * @return it returns the new root after rotation
      */
 
-
-    public Node<Key> leftRotate(){
+    public Node<Key> leftRotate() {
         Node<Key> root = this;
-        if (root==null)
-            return null;
+        if (root == null) return null;
+
         Node<Key> newRoot = root.getRightChild();
-        if (newRoot==null)
-            return null;
+        if (newRoot == null) return root; // Can't rotate if there is no right child
+
         root.setRightChild(newRoot.getLeftChild());
-        if (newRoot.getLeftChild()!=null){
+        if (newRoot.getLeftChild() != null) {
             newRoot.getLeftChild().setParent(root);
         }
         newRoot.setParent(root.getParent());
         newRoot.setLeftChild(root);
         root.setParent(newRoot);
 
-        // set new sizes
-        int size = root.getSubtreeSize();
-        newRoot.setSubtreeSize(size);
+        // Update subtree sizes
+        int leftChildSizeOfRoot = 0;
+        if (root.getLeftChild() != null) {
+            leftChildSizeOfRoot = root.getLeftChild().getSubtreeSize();
+        }
 
-        int leftSize = root.getLeftChild().getSubtreeSize();
-        int rightSize = newRoot.getLeftChild().getSubtreeSize();
-        int newRootSize = leftSize+rightSize+1;
-        root.setSubtreeSize(newRootSize);
+        int rightChildSizeOfRoot = 0;
+        if (root.getRightChild() != null) {
+            rightChildSizeOfRoot = root.getRightChild().getSubtreeSize();
+        }
 
-        // set new heights
+        root.setSubtreeSize(leftChildSizeOfRoot + rightChildSizeOfRoot + 1);
 
-        // height for old root
-        int leftHeight = root.getLeftChild().getHeightFromBottom();
-        int rightHeight = newRoot.getLeftChild().getHeightFromBottom();
-        if(leftHeight>rightHeight)
-            root.setHeightFromBottom(leftHeight+1);
-        else
-            root.setHeightFromBottom(rightHeight+1);
+        int leftChildSizeOfNewRoot = 0;
+        if (newRoot.getLeftChild() != null) {
+            leftChildSizeOfNewRoot = newRoot.getLeftChild().getSubtreeSize();
+        }
 
-        // height for new root
-        int leftHeight2 = root.getHeightFromBottom();
-        int rightHeight2 = newRoot.getRightChild().getHeightFromBottom();
-        if(leftHeight2>rightHeight2)
-            newRoot.setHeightFromBottom(leftHeight2+1);
-        else
-            newRoot.setHeightFromBottom(rightHeight2+1);
+        int rightChildSizeOfNewRoot = 0;
+        if (newRoot.getRightChild() != null) {
+            rightChildSizeOfNewRoot = newRoot.getRightChild().getSubtreeSize();
+        }
+
+        newRoot.setSubtreeSize(leftChildSizeOfNewRoot + rightChildSizeOfNewRoot + 1);
+
+        // Update heights
+        int leftChildHeightOfRoot = -1;
+        if (root.getLeftChild() != null) {
+            leftChildHeightOfRoot = root.getLeftChild().getHeightFromBottom();
+        }
+
+        int rightChildHeightOfRoot = -1;
+        if (root.getRightChild() != null) {
+            rightChildHeightOfRoot = root.getRightChild().getHeightFromBottom();
+        }
+
+        root.setHeightFromBottom(Math.max(leftChildHeightOfRoot, rightChildHeightOfRoot) + 1);
+
+        int leftChildHeightOfNewRoot = -1;
+        if (newRoot.getLeftChild() != null) {
+            leftChildHeightOfNewRoot = newRoot.getLeftChild().getHeightFromBottom();
+        }
+
+        int rightChildHeightOfNewRoot = -1;
+        if (newRoot.getRightChild() != null) {
+            rightChildHeightOfNewRoot = newRoot.getRightChild().getHeightFromBottom();
+        }
+
+        newRoot.setHeightFromBottom(Math.max(leftChildHeightOfNewRoot, rightChildHeightOfNewRoot) + 1);
 
         return newRoot;
-
     }
 
     /**
      * this method performs a right rotation on a specific node and updates the nodes accordingly
      * @return it returns the new root after rotation
      */
-
-    public Node<Key> rightRotate(){
-
+    public Node<Key> rightRotate() {
         Node<Key> root = this;
-        if (root==null)
-            return null;
+        if (root == null) return null;
+
         Node<Key> newRoot = root.getLeftChild();
-        if (root==null)
-            return null;
+        if (newRoot == null) return root; // Cannot rotate if there is no left child
 
         root.setLeftChild(newRoot.getRightChild());
-        if (newRoot.getRightChild()!=null){
+        if (newRoot.getRightChild() != null) {
             newRoot.getRightChild().setParent(root);
         }
         newRoot.setParent(root.getParent());
         newRoot.setRightChild(root);
         root.setParent(newRoot);
 
-        // set new heights
+        // Update subtree sizes
+        int leftChildSizeOfRoot = 0;
+        if (root.getLeftChild() != null) {
+            leftChildSizeOfRoot = root.getLeftChild().getSubtreeSize();
+        }
 
-        //height for old root
-        int leftHeight =newRoot.getRightChild().getHeightFromBottom();
-        int rightHeight = root.getRightChild().getHeightFromBottom();
-        if(leftHeight>rightHeight)
-            root.setHeightFromBottom(leftHeight+1);
-        else
-            root.setHeightFromBottom(rightHeight+1);
+        int rightChildSizeOfRoot = 0;
+        if (root.getRightChild() != null) {
+            rightChildSizeOfRoot = root.getRightChild().getSubtreeSize();
+        }
 
-        // height for new root
-        int leftHeight2 =newRoot.getLeftChild().getHeightFromBottom();
-        int rightHeight2 = root.getHeightFromBottom();
-        if(leftHeight2>rightHeight2)
-            newRoot.setHeightFromBottom(leftHeight2+1);
-        else
-            newRoot.setHeightFromBottom(rightHeight+1);
+        root.setSubtreeSize(leftChildSizeOfRoot + rightChildSizeOfRoot + 1);
 
-        // set new sizes
-        int size = root.getSubtreeSize();
-        newRoot.setSubtreeSize(size);
+        int leftChildSizeOfNewRoot = 0;
+        if (newRoot.getLeftChild() != null) {
+            leftChildSizeOfNewRoot = newRoot.getLeftChild().getSubtreeSize();
+        }
 
-        int leftSize = newRoot.getRightChild().getSubtreeSize();
-        int rightSize = root.getRightChild().getSubtreeSize();
-        int newRootSize = leftSize+rightSize+1;
-        root.setSubtreeSize(newRootSize);
+        int rightChildSizeOfNewRoot = 0;
+        if (newRoot.getRightChild() != null) {
+            rightChildSizeOfNewRoot = newRoot.getRightChild().getSubtreeSize();
+        }
+
+        newRoot.setSubtreeSize(leftChildSizeOfNewRoot + rightChildSizeOfNewRoot + 1);
+
+        // Update heights
+        int leftChildHeightOfRoot = -1;
+        if (root.getLeftChild() != null) {
+            leftChildHeightOfRoot = root.getLeftChild().getHeightFromBottom();
+        }
+
+        int rightChildHeightOfRoot = -1;
+        if (root.getRightChild() != null) {
+            rightChildHeightOfRoot = root.getRightChild().getHeightFromBottom();
+        }
+
+        root.setHeightFromBottom(Math.max(leftChildHeightOfRoot, rightChildHeightOfRoot) + 1);
+
+        int leftChildHeightOfNewRoot = -1;
+        if (newRoot.getLeftChild() != null) {
+            leftChildHeightOfNewRoot = newRoot.getLeftChild().getHeightFromBottom();
+        }
+
+        int rightChildHeightOfNewRoot = -1;
+        if (newRoot.getRightChild() != null) {
+            rightChildHeightOfNewRoot = newRoot.getRightChild().getHeightFromBottom();
+        }
+
+        newRoot.setHeightFromBottom(Math.max(leftChildHeightOfNewRoot, rightChildHeightOfNewRoot) + 1);
 
         return newRoot;
-
     }
+
+
 
 
 
