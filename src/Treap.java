@@ -28,6 +28,14 @@ public class Treap<Key extends Comparable<Key>>{
      */
     public Node<Key> add(Key key){
         this.root = add_helper(key,this.root, null, null);
+        if (min==null)
+            min = root;
+        if (max == null)
+            max = root;
+        if(this.min.getLeftChild()!=null)
+            min = min.getLeftChild();
+        if (this.max.getRightChild()!=null)
+            max = max.getRightChild();
         return root;
     }
 
@@ -115,7 +123,7 @@ public class Treap<Key extends Comparable<Key>>{
      */
     public Key kthSmallestElement(int k){
         Node<Key> tmp = min;
-        for (int i = 0; i < k-1; i++){
+        for (int i = 0; i < k-2; i++){
             tmp = tmp.getSuccessor();
         }
         return tmp.getKey();
@@ -128,6 +136,18 @@ public class Treap<Key extends Comparable<Key>>{
      */
     public void delete(Key key){
         this.root = delete_helper(key,this.root);
+        if (root==null)
+            return;
+        if (min==null){
+            while (root.getLeftChild()!=null){
+                min = root.getLeftChild();
+            }
+        }
+        if (max == null){
+            while (root.getRightChild()!=null)
+                max = root.getRightChild();
+        }
+
     }
 
     /**

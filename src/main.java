@@ -11,6 +11,15 @@ public class main {
             sum += treap.getTreapHeight();
         }
         System.out.println(sum/1000);
+        Treap<Integer> treap2 = new Treap<>();
+        treap2.add(10);
+        treap2.add(12);
+        treap2.add(30);
+        treap2.add(40);
+        treap2.add(4);
+        Integer kth = treap2.kthSmallestElement(2);
+        System.out.println(kth.intValue());
+
 
     }
 }
