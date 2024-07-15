@@ -28,14 +28,19 @@ public class Treap<Key extends Comparable<Key>>{
      */
     public Node<Key> add(Key key){
         this.root = add_helper(key,this.root, null, null);
-        if (min==null)
-            min = root;
-        if (max == null)
-            max = root;
-        if(this.min.getLeftChild()!=null)
-            min = min.getLeftChild();
-        if (this.max.getRightChild()!=null)
-            max = max.getRightChild();
+        Node<Key> current = root;
+        min = null;
+        while (current != null) {
+            min = current;
+            current = current.getLeftChild(); // chap tarin peida mishe ke kuchiktarine
+        }
+
+        current = root;
+        max = null;
+        while (current != null) {
+            max = current;
+            current = current.getRightChild(); // rast tarin peida mishe ke bozorgtarine
+        }
         return root;
     }
 
@@ -48,14 +53,14 @@ public class Treap<Key extends Comparable<Key>>{
      * @return A node containing the added key.
      */
     private Node<Key> add_helper(Key key, Node<Key> root, Node<Key> pre, Node<Key> suc) {
-        if (root == null){
-            Node<Key> newNode =  new Node<Key>(key);
+        if (root == null) {
+            Node<Key> newNode = new Node<Key>(key);
             newNode.setPredecessor(pre);
             newNode.setSuccessor(suc);
-            if(pre!=null){
+            if (pre != null) {
                 pre.setSuccessor(newNode);
             }
-            if(suc!=null){
+            if (suc != null) {
                 suc.setPredecessor(newNode);
             }
             return newNode;
@@ -63,51 +68,57 @@ public class Treap<Key extends Comparable<Key>>{
         int cmp = key.compareTo(root.getKey());
         if (cmp < 0) {
             root.setLeftChild(add_helper(key, root.getLeftChild(), pre, root));
-
-            if (root.getLeftChild().getLeftChild() == null && root.getLeftChild().getRightChild() == null){
-                root.getLeftChild().setSuccessor(root);
-            }
             root.getLeftChild().setParent(root);
-            root.setSubtreeSize(root.getSubtreeSize() + 1);
-
-            int height = -1;
-            if (root.getLeftChild() != null) {
-                height = root.getLeftChild().getHeightFromBottom();
-            }
-            if (root.getRightChild() != null && root.getRightChild().getHeightFromBottom() > height){
-                height = root.getRightChild().getHeightFromBottom();
-            }
-            root.setHeightFromBottom(height + 1);
-
-            if (root.getLeftChild().getPriority() > root.getPriority())
+            if (root.getLeftChild().getPriority() > root.getPriority()) {
                 root = root.rightRotate();
-
-        }
-        else if (cmp > 0) {
+            }
+        } else if (cmp > 0) {
             root.setRightChild(add_helper(key, root.getRightChild(), root, suc));
             root.getRightChild().setParent(root);
-            root.setSubtreeSize(root.getSubtreeSize()+1);
-            int height = -1;
-            if (root.getLeftChild() != null) {
-                height = root.getLeftChild().getHeightFromBottom();
-            }
-            if (root.getRightChild() != null && root.getRightChild().getHeightFromBottom() > height){
-                height = root.getRightChild().getHeightFromBottom();
-            }
-            root.setHeightFromBottom(height + 1);
-
-            if (root.getRightChild().getPriority() > root.getPriority())
+            if (root.getRightChild().getPriority() > root.getPriority()) {
                 root = root.leftRotate();
+            }
         }
+        if (root == null) {
+            return root;
+        }
+
+        int leftSubtreeSize = (root.getLeftChild() != null) ? root.getLeftChild().getSubtreeSize() : 0;
+        int rightSubtreeSize = (root.getRightChild() != null) ? root.getRightChild().getSubtreeSize() : 0;
+
+        root.setSubtreeSize(leftSubtreeSize + rightSubtreeSize + 1);
+
+        int leftHeight = (root.getLeftChild() != null) ? root.getLeftChild().getHeightFromBottom() : -1;
+        int rightHeight = (root.getRightChild() != null) ? root.getRightChild().getHeightFromBottom() : -1;
+
+        root.setHeightFromBottom(Math.max(leftHeight, rightHeight) + 1);
         return root;
     }
 
+
+
     /**
-     * updates the successor and predecessor of a given node
-     * @param node changes affect this node
-     * @param pre the predecessor to assign the node
-     * @param suc the successor to assign the node
+     * returns the k-th smallest element in the Treap.
+     @param  k   index + 1 of the desired element.
      */
+    public Key kthSmallestElement(int k) {
+        Node<Key> tmp = min;
+        for (int i = 0; i < k-1 ; i++) {
+            if (tmp == null) {
+                System.out.println("k is out of range");
+                return null;
+            }
+            tmp = tmp.getSuccessor();
+        }
+        if (tmp == null) {
+            System.out.println("K is null");
+            return null;
+        }
+        return tmp.getKey();
+    }
+
+
+
     public void updateSucAndPre(Node<Key> node , Node<Key> pre, Node<Key> suc){
         if (pre != null){
             pre.setSuccessor(node.getSuccessor());
@@ -115,18 +126,6 @@ public class Treap<Key extends Comparable<Key>>{
         if (suc !=null){
             suc.setPredecessor(node.getPredecessor());
         }
-    }
-
-    /**
-     * returns the k-th smallest element in the Treap.
-     @param  k   index + 1 of the desired element.
-     */
-    public Key kthSmallestElement(int k){
-        Node<Key> tmp = min;
-        for (int i = 0; i < k-2; i++){
-            tmp = tmp.getSuccessor();
-        }
-        return tmp.getKey();
     }
 
     /**
@@ -149,7 +148,6 @@ public class Treap<Key extends Comparable<Key>>{
         }
 
     }
-
     /**
      * Helper function to delete a key from a Treap.
      * @param key Key to be removed from the Treap.
