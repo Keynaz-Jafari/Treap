@@ -105,4 +105,4 @@ public class Main {
 ## Performance
 
 The Treap ensures that the binary search tree and heap properties are maintained with each insertion and deletion operation, resulting in balanced trees that support efficient query operations. The average height of the Treap after inserting 100,000 elements is evaluated over 1,000 trials in the provided `main` method.
-[Treap Project 1d0cb9e951614455a587ce9437df67df.md](https://github.com/user-attachments/files/16273561/Treap.Project.1d0cb9e951614455a587ce9437df67df.md)
+
