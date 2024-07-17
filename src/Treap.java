@@ -102,21 +102,44 @@ public class Treap<Key extends Comparable<Key>>{
      * returns the k-th smallest element in the Treap.
      @param  k   index + 1 of the desired element.
      */
+//    public Key kthSmallestElement(int k) {
+//        Node<Key> tmp = min;
+//        for (int i = 0; i < k-1 ; i++) {
+//            if (tmp == null) {
+//                System.out.println("k is out of range");
+//                return null;
+//            }
+//            tmp = tmp.getSuccessor();
+//        }
+//        if (tmp == null) {
+//            System.out.println("K is null");
+//            return null;
+//        }
+//        return tmp.getKey();
+//    }
+
     public Key kthSmallestElement(int k) {
-        Node<Key> tmp = min;
-        for (int i = 0; i < k-1 ; i++) {
-            if (tmp == null) {
-                System.out.println("k is out of range");
-                return null;
-            }
-            tmp = tmp.getSuccessor();
-        }
-        if (tmp == null) {
-            System.out.println("K is null");
-            return null;
-        }
-        return tmp.getKey();
+        return kthSmallestElementHelper(root, k);
     }
+
+    private Key kthSmallestElementHelper(Node<Key> node, int k) {
+        if (node == null) {
+            return null; 
+        }
+
+        int leftSubtreeSize = (node.getLeftChild() != null) ? node.getLeftChild().getSubtreeSize() : 0;
+
+        if (k <= leftSubtreeSize) {
+            return kthSmallestElementHelper(node.getLeftChild(), k);
+        } else if (k == leftSubtreeSize + 1) {
+            return node.getKey();
+        } else {
+            return kthSmallestElementHelper(node.getRightChild(), k - leftSubtreeSize - 1);
+        }
+    }
+
+
+
 
     /**
      * this method deletes a key from the treap
@@ -124,7 +147,7 @@ public class Treap<Key extends Comparable<Key>>{
      */
     public void delete(Key key){
         this.root = delete_helper(key, this.root);
-        updateMinMax(root); // Update min and max pointers after deletion
+        updateMinMax(root);
     }
 
     private Node<Key> delete_helper(Key key, Node<Key> root) {
@@ -143,7 +166,9 @@ public class Treap<Key extends Comparable<Key>>{
             if (root.getRightChild() != null) {
                 root.getRightChild().setParent(root);
             }
-        } else {
+        }
+
+        else {
             // Node to delete found
             if (root.getLeftChild() == null) {
                 Node<Key> tmp = root.getRightChild();
@@ -190,7 +215,7 @@ public class Treap<Key extends Comparable<Key>>{
      * @param root the root
      */
 
-    // Update min and max pointers after deletion
+    // Update min and max after deletion
     private void updateMinMax(Node<Key> root) {
         if (root == null) {
             min = null;
@@ -278,6 +303,7 @@ public class Treap<Key extends Comparable<Key>>{
         }
         return 0;
     }
+
 
     public Key getTreapMin(){
         if (this.min!=null){
